@@ -1,6 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:location/location.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -23,19 +25,14 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   
-  bool _serviceEnabled;
+  Completer<GoogleMapController> _controller = Completer();
 
-  PermissionStatus _permissionGranted;
-
-  LocationData _location;
 
   @override
   void initState() {
 
     super.initState();
   
-    checkLocationServicesInDevice();
-
   }
 
   @override
@@ -44,94 +41,18 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text('Location Pratice'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-          ],
+      body: GoogleMap(
+        mapType: MapType.normal,
+        initialCameraPosition: CameraPosition(
+          target: LatLng(38.9637, 35.2433),
+          zoom: 14.4746,
         ),
+        onMapCreated: (GoogleMapController controller) {
+          _controller.complete(controller);
+        },
+        
       ),
     );
-  }
-
-  Future<void> checkLocationServicesInDevice() async {
-
-    Location location = new Location();
-
-    _serviceEnabled = await location.serviceEnabled();
-
-    if(_serviceEnabled)
-    {
-    
-      _permissionGranted = await location.hasPermission();
-
-      if(_permissionGranted == PermissionStatus.granted)
-      {
-        
-        _location = await location.getLocation();
-
-        print(_location.latitude.toString() + " " + _location.longitude.toString());
-
-      }else{
-
-        _permissionGranted = await location.requestPermission();
-
-        if(_permissionGranted == PermissionStatus.granted)
-        {
-          
-          print('user allowed');
-
-        }else{
-
-          SystemNavigator.pop();
-
-        }
-
-      }
-    
-    }else{
-
-      _serviceEnabled = await location.requestService();
-
-      if(_serviceEnabled)
-      {
-        
-        _permissionGranted = await location.hasPermission();
-
-        if(_permissionGranted == PermissionStatus.granted)
-        {
-          
-          print('user allowed before');
-
-        }else{
-
-          _permissionGranted = await location.requestPermission();
-
-          if(_permissionGranted == PermissionStatus.granted)
-          {
-            
-            print('user allowed');
-
-          }else{
-
-            SystemNavigator.pop();
-
-          }
-
-        }
-
-      
-      }else{
-
-        SystemNavigator.pop();
-      
-      }
-
-    }
-    
   }
 
 }
