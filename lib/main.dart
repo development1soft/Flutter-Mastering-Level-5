@@ -25,9 +25,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   
-  Completer<GoogleMapController> _controller = Completer();
-
-
+  
   @override
   void initState() {
 
@@ -41,16 +39,8 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text('Location Pratice'),
       ),
-      body: GoogleMap(
-        mapType: MapType.normal,
-        initialCameraPosition: CameraPosition(
-          target: LatLng(38.9637, 35.2433),
-          zoom: 14.4746,
-        ),
-        onMapCreated: (GoogleMapController controller) {
-          _controller.complete(controller);
-        },
-        
+      body: Center(
+        child: Text('Welcome'),
       ),
     );
   }
